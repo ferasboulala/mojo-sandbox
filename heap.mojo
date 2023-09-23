@@ -1,7 +1,7 @@
 from memory.unsafe import Pointer
 from utils.vector import DynamicVector
 
-alias Comparator = fn[type: AnyType] (type, type) capturing -> Bool
+alias Comparator = fn[type: AnyType] (type, type) -> Bool
 
 @always_inline
 fn _parent_index[branching_factor: Int](index: Int) -> Int:
@@ -24,7 +24,7 @@ fn _DynamicVector_end[type: AnyType](vec: DynamicVector[type]) -> Pointer[type]:
 fn bool_to_int(b: Bool) -> Int:
     var simd = SIMD[DType.bool, 8](False)
     simd[0] = b
-    
+
     return rebind[Int](simd)
 
 @always_inline
@@ -125,11 +125,11 @@ struct Heap[type: AnyType, comparator: Comparator, branching_factor: Int]:
 
     @always_inline
     fn __len__(self) -> Int:
-        return len(self._queue)
+        return self.size()
 
     @always_inline
     fn empty(self) -> Bool:
-        return len(self._queue) == 0
+        return self.size() == 0
 
     @always_inline
     fn insert(inout self, item: type):
